@@ -1,47 +1,47 @@
-# dsh-specify-subagent-suite
+# dsh-specify-subagent-suite（子代理模板工具套件）
 
-**Languages**: [English](./README.md) | [简体中文](./README.zh.md) | [日本語](./README.ja.md)
+**语言**： [简体中文](./README.md) | [English](./README.en.md) | [日本語](./README.ja.md)
 
-Five resident DeepSeek Harness (DSH) plugins merged into **one Cordis bundle**: the right-side Agent list, the subagent template panel, the one-shot subagent record badge, and the `subagent_pro` / `subagent_pro_presets` / `subagent_pro_audit` tools.
+五个常驻 DeepSeek Harness（DSH）插件合并为**一个 Cordis bundle**：右侧栏 Agent 列表、子代理模板面板、一次性子代理 record 徽章，以及 `subagent_pro` / `subagent_pro_presets` / `subagent_pro_audit` 三个工具。
 
-If you use DSH and dispatch subagents — especially with Agent Presets — this suite gives you a unified control surface: browse presets in the sidebar, bind provider/model/effort templates per preset (globally or per session), dispatch nested subagents through one tool, and audit exactly which model each child actually ran on.
+如果你在使用 DSH 且经常派遣子代理——尤其是配合 Agent Preset 使用——本套件提供统一的控制面：在侧栏浏览 preset、为每个 preset 绑定 provider/model/effort 模板（全局或会话级）、用一个工具完成嵌套派遣，并审计每个子代理实际运行在哪个模型上。
 
-## Features
+## 功能
 
-1. **Right-side Agent list** — a `details` sidebar listing every dispatchable Agent Preset with health (broken presets explain why they cannot mount), with incremental auto-expansion of catalogs.
-2. **Subagent template panel** — a `子Agent 模板` dropdown in the session header to configure `provider / model / effort` overrides per preset. Two layers: **global** (all sessions) and **session** (this session only). Edits persist in the host at `~/.dsh/subctl/overrides.json`. While a session is busy (main turn running or any descendant in flight) edits are rejected for that session, and global edits made by *other* sessions during a busy generation do not leak into that session's dispatches until it goes idle.
-3. **One-shot subagent record badge** — a composer badge showing readable chips (provider / model / preset / effort) for the most recent subagent record, in both light and dark themes.
-4. **`subagent_pro`** — dispatch subagents with a `preset`, `provider`, `model`, `effort`, `max_tokens`, or `run_in_background` parameter — everything the built-in `subagent` tool cannot do. Supports nested delegation (root → child → grandchild) with depth limits.
-5. **`subagent_pro_presets` / `subagent_pro_audit`** — list every dispatchable preset with literal ids (call before dispatching when unsure), and inspect a dispatched child's actual request headers (provider / model / reasoningEffort / preset).
+1. **右侧 Agent 列表** —— `details` 侧栏列出全部可派遣的 Agent Preset 及健康状态（broken 的 preset 会给出无法挂载的原因），目录增量自动展开。
+2. **子代理模板面板** —— 会话头部的「子Agent 模板」下拉面板，按 preset 配置 `provider / model / effort` 覆盖。双层作用域：**全局层**（所有会话）与**会话层**（仅本会话）。编辑由 host 持久化到 `~/.dsh/subctl/overrides.json`。会话忙时（主 turn 在途或任一后代在途）该会话的编辑被拒绝；忙世代期间其他会话对全局层的编辑也不会渗入该会话的派遣面，直到其转闲后生效。
+3. **一次性子代理 record 徽章** —— composer 徽章以可读 chips（provider / model / preset / effort）展示最近一条子代理 record，亮暗两主题适配。
+4. **`subagent_pro`** —— 以 `preset`、`provider`、`model`、`effort`、`max_tokens`、`run_in_background` 参数派遣子代理——内置 `subagent` 工具做不到的一切。支持嵌套派遣（根 → 子 → 孙）与深度限制。
+5. **`subagent_pro_presets` / `subagent_pro_audit`** —— 列出全部可派遣 preset 的字面 id（不确定时先调用再派遣）；读取子代理的实际请求头（provider / model / reasoningEffort / preset）。
 
-## Install
+## 安装
 
 ```bash
 dsh plugin --profile web add Cho-Geer/dsh-specify-subagent-suite
 ```
 
-or with npm:
+或用 npm：
 
 ```bash
 cd ~/.dsh/profiles/web && pnpm add @zach-tao/dsh-specify-subagent-suite
 ```
 
-then add the row to your profile's `cordis.patch.yml` (id `specify-subagent-suite`) and restart `dsh web`.
+然后在 profile 的 `cordis.patch.yml` 加入该行（id 为 `specify-subagent-suite`）并重启 `dsh web`。
 
-> Do not keep this suite installed alongside the five original plugins it replaces (`dsh-subdisp`, `dsh-subpro`, `dsh-subctl`, `dsh-agent-sidebar`, `dsh-composer-model-badge`) — double registration of routes, hooks, tools and slots is undefined behavior. Uninstall the originals when you switch.
+> 不要与本套件取代的五个原插件（`dsh-subdisp`、`dsh-subpro`、`dsh-subctl`、`dsh-agent-sidebar`、`dsh-composer-model-badge`）共存——路由、钩子、工具与 slot 的双重注册属未定义行为。切换时请卸载原件。
 
-## Runtime requirements
+## 运行时要求
 
-- **Node.js** `^22.19.0 || >=24.0.0` (matches the DSH host).
-- **`@deepseek-ai/dsh-tools`** — resolved automatically from public npm via this package's `dependencies` (`next` dist-tag). The host-half tools (`subagent_pro` etc.) are defined through it; no manual step is needed.
-- **React** `^18.2.0` — peer dependency; provided by the DSH web client at runtime (never bundled).
+- **Node.js** `^22.19.0 || >=24.0.0`（与 DSH host 对齐）。
+- **`@deepseek-ai/dsh-tools`** —— 经本包 `dependencies`（`next` dist-tag）自动从公共 npm 解析。host 半体的工具（`subagent_pro` 等）经它定义，无需手动处理。
+- **React** `^18.2.0` —— peer dependency，由 DSH web client 在运行时提供（永不打包）。
 
-## Known limitations
+## 已知限制
 
-- The `subagent_fork` / built-in `subagent` tools are **not** covered by the template or busy-tracking system (framework built-ins bypass plugin dispatch paths).
-- Busy-generation template freezing covers preset dispatches through `subagent_pro`; transport-only dispatches (no preset) never consult templates by design.
-- Template `provider/model` is filled **once at dispatch time**; a mid-run UI model switch intentionally wins for subsequent requests of that child.
+- 框架内置的 `subagent_fork` / `subagent` 工具**不在**模板与忙态追踪覆盖范围内（内置工具不经插件派遣路径）。
+- 忙世代模板冻结覆盖经 `subagent_pro` 的 preset 派遣；纯 transport 派遣（无 preset）按设计不查模板。
+- 模板 `provider/model` 仅在**派遣时刻**一次性填充；子代理运行期间 UI 切换模型对后续请求有意胜出。
 
-## License
+## 许可
 
-MIT © 2026 Cho-Geer — see [LICENSE](./LICENSE).
+MIT © 2026 Cho-Geer —— 见 [LICENSE](./LICENSE)。

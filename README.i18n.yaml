@@ -2,6 +2,8 @@
 # of the last confirmed-consistent state. All three languages carry equal
 # authority; after editing any side, bring the others along and re-record
 # with: git hash-object <file>
-README.md: fe8ec45e8ea4719ee8a1043f6f37449548c32a0a
-README.zh.md: c71db7125fda39d226ef41b6d2515a6d1b3dce6f
-README.ja.md: 12f420c6264204b174e1d579c6f7360eb4922032
+# Primary language is Chinese (README.md); English and Japanese are
+# README.en.md / README.ja.md.
+README.md: 346839dccf24a36033108ca959e9b66f04246b2d
+README.en.md: a6636f428d6c0c0a9655b6850d410ed799d6f0fb
+README.ja.md: 8f4b20ae45b58810b844b7773a87629652c6e79e

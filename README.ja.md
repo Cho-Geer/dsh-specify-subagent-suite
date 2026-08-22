@@ -1,6 +1,6 @@
 # dsh-specify-subagent-suite（サブエージェントテンプレートスイート）
 
-**言語**： [English](./README.md) | [简体中文](./README.zh.md) | [日本語](./README.ja.md)
+**言語**： [简体中文](./README.md) | [English](./README.en.md) | [日本語](./README.ja.md)
 
 5 つの常駐 DeepSeek Harness（DSH）プラグインを**1 つの Cordis バンドル**に統合：右サイドの Agent リスト、サブエージェントテンプレートパネル、単発サブエージェント record バッジ、および `subagent_pro` / `subagent_pro_presets` / `subagent_pro_audit` の 3 ツール。
 
