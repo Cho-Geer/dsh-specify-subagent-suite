@@ -64,10 +64,11 @@ function factory(require) {
       .sbx-call-err { color: var(--dsw-alias-state-error-primary, #ff7875); }
     `)
 
-    const openColumn = () => {
-      try { layout.openDetails() } catch (e) { console.error('sbx: openDetails failed', e) }
-    }
-    openColumn()
+    // K4b 修复（2026-08-23）：apply 时机布局根节点尚未首渲染，LayoutController
+    // 的 panel actions 尚未接线（ui-layout service.ts#require：root entry 首渲染
+    // 前调用属 boot-order bug）。此处原先的立即 openDetails() 已删除：面板
+    // 挂载后由 SidebarPanel 的被动 useEffect 自动展开（见下），apply 无需
+    // 也无法在此时机开列。
 
     // 手动收起标志：用户用 › 收起后（userCollapsed=true），会话切换不再自动重开。
     // 重开逻辑在组件用被动 useEffect 完成（晚于 AppFrame 的 layout-effect closeDetails）。
@@ -424,5 +425,4 @@ function factory(require) {
     return plugin
 }
 
-if (typeof module !== 'undefined' && module.exports) module.exports = factory
 export default factory
