@@ -1,5 +1,7 @@
 # dsh-specify-subagent-suite（子代理模板工具套件）
 
+**语言**： [English](./README.md) | [简体中文](./README.zh.md) | [日本語](./README.ja.md)
+
 五个常驻 DeepSeek Harness（DSH）插件合并为**一个 Cordis bundle**：右侧栏 Agent 列表、子代理模板面板、一次性子代理 record 徽章，以及 `subagent_pro` / `subagent_pro_presets` / `subagent_pro_audit` 三个工具。
 
 如果你在使用 DSH 且经常派遣子代理——尤其是配合 Agent Preset 使用——本套件提供统一的控制面：在侧栏浏览 preset、为每个 preset 绑定 provider/model/effort 模板（全局或会话级）、用一个工具完成嵌套派遣，并审计每个子代理实际运行在哪个模型上。

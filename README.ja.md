@@ -1,5 +1,7 @@
 # dsh-specify-subagent-suite（サブエージェントテンプレートスイート）
 
+**言語**： [English](./README.md) | [简体中文](./README.zh.md) | [日本語](./README.ja.md)
+
 5 つの常駐 DeepSeek Harness（DSH）プラグインを**1 つの Cordis バンドル**に統合：右サイドの Agent リスト、サブエージェントテンプレートパネル、単発サブエージェント record バッジ、および `subagent_pro` / `subagent_pro_presets` / `subagent_pro_audit` の 3 ツール。
 
 DSH でサブエージェントを頻繁に派遣する——特に Agent Preset と併用する——ユーザーに向けた統制画面を提供します：サイドバーで preset を閲覧し、preset ごとに provider / model / effort テンプレートを（グローバルまたはセッション単位で）バインドし、1 つのツールでネストされた派遣を行い、各子エージェントが実際にどのモデルで実行されたかを監査できます。

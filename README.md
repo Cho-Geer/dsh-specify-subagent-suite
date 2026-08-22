@@ -1,5 +1,7 @@
 # dsh-specify-subagent-suite
 
+**Languages**: [English](./README.md) | [简体中文](./README.zh.md) | [日本語](./README.ja.md)
+
 Five resident DeepSeek Harness (DSH) plugins merged into **one Cordis bundle**: the right-side Agent list, the subagent template panel, the one-shot subagent record badge, and the `subagent_pro` / `subagent_pro_presets` / `subagent_pro_audit` tools.
 
 If you use DSH and dispatch subagents — especially with Agent Presets — this suite gives you a unified control surface: browse presets in the sidebar, bind provider/model/effort templates per preset (globally or per session), dispatch nested subagents through one tool, and audit exactly which model each child actually ran on.
