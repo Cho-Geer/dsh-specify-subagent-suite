@@ -1,0 +1,78 @@
+.frame {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 24px 20px;
+  min-height: 54px;
+  padding: 10px 16px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 14px;
+  background: var(--dsw-alias-bg-layer-1);
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.frame strong {
+  color: var(--dsw-alias-label-primary);
+  font-weight: 510;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.meta {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--dsw-alias-bg-layer-2, transparent);
+  color: var(--dsw-alias-label-secondary, var(--dsw-alias-label-tertiary));
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.preset {
+  /* Tone is injected per-preset from `preset-tone.ts` via inline custom
+     properties on the span. The fallback chain lands on the theme's neutral
+     layer+label tokens so a chip that mounts before the preset display-name
+     cache lands still reads as a chip rather than vanishing into the parent
+     frame. */
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--preset-tone-bg, var(--dsw-alias-bg-layer-2, transparent));
+  color: var(--preset-tone-fg, var(--dsw-alias-label-primary, inherit));
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 510;
+}
+
+/* preset chip 的色对切换必须跟 DSH 的 light/dark 走 —— 用
+   body[data-ds-dark-theme]（与 packages/client/ui-theme/src/boot-theme.ts:19
+   的 toggleAttribute('data-ds-dark-theme', dark) 对齐），而不是
+   prefers-color-scheme。原作者注释里写"@media (prefers-color-scheme: dark)"，
+   在 OS=light/DSH=dark 或 OS=dark/DSH=light 的组合下会出现淡字 + 饱底
+   不可读的组合（实测后一种最常见：DSH 选 light 但 OS 是 dark，导致 chip
+   强行套深色对到浅色背景）。 */
+body[data-ds-dark-theme] .preset {
+  background: var(--preset-tone-bg-dark, var(--dsw-alias-bg-layer-2, transparent));
+  color: var(--preset-tone-fg-dark, var(--dsw-alias-label-primary, inherit));
+}
+
+/* Light-mode override: 在 DSH 的 light 外观（body 上没有
+   data-ds-dark-theme）下 --dsw-alias-label-tertiary 是 rgb(129,133,140)，
+   在浅色背景上对比度太低，"一次性任务不支持后续消息…" 这类 body
+   文字与 minimax-cn/... 这种 meta 文字几近看不清。强制成纯黑。
+   注意：DSH 的主题切换靠 body[data-ds-dark-theme] / body 无该属性，
+   不是 prefers-color-scheme — 后者跟 OS 设置走，不能表达用户的
+   "我在 DSH 里选了 light" 这一选择。
+   用 :not([data-ds-dark-theme]) 锁定 DSH light，DSH dark 时不命中。 */
+body:not([data-ds-dark-theme]) .frame,
+body:not([data-ds-dark-theme]) .meta {
+  color: #000;
+}

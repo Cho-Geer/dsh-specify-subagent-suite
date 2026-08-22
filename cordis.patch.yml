@@ -1,0 +1,11 @@
+# dsh-specify-subagent-suite bundle patch: single Cordis row id
+# `specify-subagent-suite` (Phase 0.2). Mounts all five merged halves
+# (subdisp host + subpro host + subctl host + agent-sidebar client +
+# subctl-panel client + composer client) under one bundle entry per
+# Phase 0.3.A (single Cordis row, simplest layout).
+#
+# The row's `name` is the npm package name; the row's `id` is the
+# framework-internal row id used for id-targeted patch lookups.
+- insert:
+    - id: specify-subagent-suite
+      name: '@zach-tao/dsh-specify-subagent-suite'
