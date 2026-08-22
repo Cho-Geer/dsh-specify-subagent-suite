@@ -4,4 +4,4 @@
 # with: git hash-object <file>
 README.md: 2ba95180fa0e291aa6d41ac5cc127476179a1468
 README.zh.md: 52e387cf07394a3aa0e1ffad30bf7e0de7433db5
-README.ja.md: 2fd90c7f360fb3fb9151fa406ac847e616e90452
+README.ja.md: 233c277c3dcf792dfb612a5a8439ce735c6fbf75

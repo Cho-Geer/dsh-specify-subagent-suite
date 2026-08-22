@@ -7,7 +7,7 @@ DSH でサブエージェントを頻繁に派遣する——特に Agent Preset
 ## 機能
 
 1. **右サイド Agent リスト** —— すべての派遣可能な Agent Preset を `details` サイドバーに一覧表示（broken の preset はマウント不能な理由を提示）。カタログはインクリメンタルに自動展開。
-2. **サブエージェントテンプレートパネル** —— セッションヘッダーの「子Agent 模板」ドロップダウンで、preset ごとに `provider / model / effort` オーバーライドを設定。**グローバル層**（全セッション）と**セッション層**（当該セッションのみ）の 2 層構造。編集は host が `~/.dsh/subctl/overrides.json` に永続化。セッション繁忙中（メイン turn 実行中または子孫 in-flight 中）はそのセッションの編集を拒否し、繁忙世代の間に他セッションが行ったグローバル編集は、当該セッションが空闲になるまで派遣面に漏れません。
+2. **サブエージェントテンプレートパネル** —— セッションヘッダーの「子Agent 模板」ドロップダウンで、preset ごとに `provider / model / effort` オーバーライドを設定。**グローバル層**（全セッション）と**セッション層**（当該セッションのみ）の 2 層構造。編集は host が `~/.dsh/subctl/overrides.json` に永続化。セッション繁忙中（メイン turn 実行中または子孫 in-flight 中）はそのセッションの編集を拒否し、繁忙世代の間に他セッションが行ったグローバル編集は、当該セッションがアイドル状態になるまで派遣面に漏れません。
 3. **単発サブエージェント record バッジ** —— composer バッジが直近のサブエージェント record を読みやすい chips（provider / model / preset / effort）で表示。ライト／ダーク両テーマ対応。
 4. **`subagent_pro`** —— `preset`、`provider`、`model`、`effort`、`max_tokens`、`run_in_background` パラメータでサブエージェントを派遣——内蔵 `subagent` ツールにはできないすべて。ネスト派遣（ルート → 子 → 孫）と深度制限に対応。
 5. **`subagent_pro_presets` / `subagent_pro_audit`** —— 派遣可能な全 preset のリテラル id を一覧表示（不確実な場合は派遣前に呼び出し）；子エージェントの実際のリクエストヘッダー（provider / model / reasoningEffort / preset）を参照。

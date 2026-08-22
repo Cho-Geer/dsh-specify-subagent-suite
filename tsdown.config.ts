@@ -9,7 +9,7 @@
  * <style data-plugin="<id>"> tag at factory execution.
  */
 import { readFile } from 'node:fs/promises'
-import { basename, dirname, isAbsolute, resolve as resolvePath } from 'node:path'
+import { basename, dirname, isAbsolute, relative as relativePath, resolve as resolvePath } from 'node:path'
 import type { UserConfig } from 'tsdown'
 import { transform } from 'lightningcss'
 
@@ -93,11 +93,14 @@ const config: UserConfig = {
     resolveId(source: string, importer: string | undefined) {
       if (!source.endsWith('.module.css')) return null
       const abs = importer !== undefined ? sourceAssetPath(source, importer) : source
-      return CSS_VIRTUAL_PREFIX + abs + CSS_VIRTUAL_SUFFIX
+      // Privacy: the virtual id leaks into the emitted `//#region` label —
+      // store it RELATIVE to the bundle root (process.cwd()) so the public
+      // artifact never embeds a local absolute path.
+      return CSS_VIRTUAL_PREFIX + relativePath(process.cwd(), abs) + CSS_VIRTUAL_SUFFIX
     },
     async load(virtualId: string) {
       if (!virtualId.startsWith(CSS_VIRTUAL_PREFIX)) return null
-      const fileId = virtualId.slice(CSS_VIRTUAL_PREFIX.length, -CSS_VIRTUAL_SUFFIX.length)
+      const fileId = resolvePath(process.cwd(), virtualId.slice(CSS_VIRTUAL_PREFIX.length, -CSS_VIRTUAL_SUFFIX.length))
       // The virtual id otherwise hides the physical stylesheet from Rolldown's watch graph.
       this.addWatchFile(fileId)
       const source = await readFile(fileId)
