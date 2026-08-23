@@ -8,11 +8,55 @@ DSH でサブエージェントを頻繁に派遣する——特に Agent Preset
 
 ## 機能
 
-1. **右サイド Agent リスト** —— すべての派遣可能な Agent Preset を `details` サイドバーに一覧表示（broken の preset はマウント不能な理由を提示）。カタログはインクリメンタルに自動展開。
-2. **サブエージェントテンプレートパネル** —— セッションヘッダーの「子Agent 模板」ドロップダウンで、preset ごとに `provider / model / effort` オーバーライドを設定。**グローバル層**（全セッション）と**セッション層**（当該セッションのみ）の 2 層構造。編集は host が `~/.dsh/subctl/overrides.json` に永続化。セッション繁忙中（メイン turn 実行中または子孫 in-flight 中）はそのセッションの編集を拒否し、繁忙世代の間に他セッションが行ったグローバル編集は、当該セッションがアイドル状態になるまで派遣面に漏れません。
-3. **単発サブエージェント record バッジ** —— composer バッジが直近のサブエージェント record を読みやすい chips（provider / model / preset / effort）で表示。ライト／ダーク両テーマ対応。
-4. **`subagent_pro`** —— `preset`、`provider`、`model`、`effort`、`max_tokens`、`run_in_background` パラメータでサブエージェントを派遣——内蔵 `subagent` ツールにはできないすべて。ネスト派遣（ルート → 子 → 孫）と深度制限に対応。
-5. **`subagent_pro_presets` / `subagent_pro_audit`** —— 派遣可能な全 preset のリテラル id を一覧表示（不確実な場合は派遣前に呼び出し）；子エージェントの実際のリクエストヘッダー（provider / model / reasoningEffort / preset）を参照。
+### 1. 右サイド Agent リスト
+
+すべての派遣可能な Agent Preset を `details` サイドバーに一覧表示（broken の preset はマウント不能な理由を提示）。カタログはインクリメンタルに自動展開。
+
+![右サイド Agent リスト](./docs/assets/01-agent-list.png)
+
+サイドバー上部に 3 タブ：`Agent 列表` / `To-Do` / `工具详情`。空セッションでは「主会话暂无子代理。」と表示。派遣後は直近 record のメタ情報（preset、provider、model、effort）が自動で表示されます。
+
+### 2. サブエージェントテンプレートパネル
+
+セッションヘッダーの「子Agent 模板」ドロップダウンで、preset ごとに `provider / model / effort` オーバーライドを設定。
+
+- **2 層スコープ**：**グローバル層**（全セッション）と**セッション層**（当該セッションのみ）。
+- **永続化**：編集は host が `~/.dsh/subctl/overrides.json` に永続化。
+- **繁忙保護**：セッション繁忙中（メイン turn 実行中または子孫 in-flight 中）はそのセッションの編集を拒否し、繁忙世代の間に他セッションが行ったグローバル編集は、当該セッションがアイドル状態になるまで派遣面に漏れません。
+
+![サブエージェントテンプレートパネル](./docs/assets/02-subctl-panel.png)
+
+パネル上部に 2 タブ：`全部默认`（グローバル層）| `仅本会话`（セッション層）。各行は preset：左に `provider / model` ドロップダウン、右に `effort` ドロップダウン。右上の `刷新` でディスクのオーバーライドを再読込。
+
+### 3. 単発サブエージェント record バッジ
+
+composer バッジが直近のサブエージェント record を読みやすい chips（`provider / model / preset / effort`）で表示。ライト／ダーク両テーマ対応。
+
+![単発サブエージェント record バッジ](./docs/assets/03-composer-badge.png)
+
+バッジはコンポーザ入力の上部に表示されます。caption は「一次性子代理记录 —— 一次性任务不支持持续消息，可在这里看完整执行记录。」。chips は `standard` / `volcano-engineering/ark-code-latest` の形で、record の preset と実際に派遣された provider/model に対応します。
+
+### 4. `subagent_pro`
+
+`preset`、`provider`、`model`、`effort`、`max_tokens`、`run_in_background` パラメータでサブエージェントを派遣——内蔵 `subagent` ツールにはできないすべて。ネスト派遣（ルート → 子 → 孫）と深度制限に対応。
+
+![subagent_pro 派遣フロー](./docs/assets/04-subagent-pro.png)
+
+スクリーンショットはハードルールに沿った派遣フローを示します：まず `subagent_pro_presets` を呼び出して対象 preset が存在することを確認し、`subagent_pro` の署名を検証し、最後に `preset / provider / model / effort` を付けて派遣。これが `subagent_pro` の正規派遣面です。
+
+### 5. `subagent_pro_presets` / `subagent_pro_audit`
+
+- **`subagent_pro_presets`** —— 派遣可能な全 preset のリテラル id を一覧表示（不確実な場合は派遣前に呼び出し）。
+
+![subagent_pro_presets 出力](./docs/assets/05-subagent-pro-presets.png)
+
+ツール署名：`subagent_pro_presets({})`。出力は `{"presets":[{"id":"standard","name":"标准模式","description":"...","trust":"system"}, ...]}` 形式。各エントリが派遣可能な kebab-case id を提供します。
+
+- **`subagent_pro_audit`** —— 子エージェントの実際のリクエストヘッダー（`provider / model / reasoningEffort / preset`）を参照。
+
+![subagent_pro_audit 出力](./docs/assets/06-subagent-pro-audit.png)
+
+ツール署名：`subagent_pro_audit({ sessionId: "last" })`。出力：`requestHeaders[0] = { reason, provider, model }`、`agentPreset`、`origin`、`parentSession`。「X だと思った」を「実際に X で動いた」に変換します。
 
 ## インストール
 

@@ -4,6 +4,6 @@
 # with: git hash-object <file>
 # Primary language is Chinese (README.md); English and Japanese are
 # README.en.md / README.ja.md.
-README.md: 346839dccf24a36033108ca959e9b66f04246b2d
-README.en.md: a6636f428d6c0c0a9655b6850d410ed799d6f0fb
-README.ja.md: 8f4b20ae45b58810b844b7773a87629652c6e79e
+README.md: fefa16a9db334cff2ae6fffe0bbdee1f5b89ad56
+README.en.md: 34451d9d2fc4d1e99947c66dcfb0fa642024a1e6
+README.ja.md: 65ac347c64e2d93170ee1b9c87d89d99301477a5
