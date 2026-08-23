@@ -28,8 +28,6 @@ cd ~/.dsh/profiles/web && pnpm add @zach-tao/dsh-specify-subagent-suite
 
 然后在 profile 的 `cordis.patch.yml` 加入该行（id 为 `specify-subagent-suite`）并重启 `dsh web`。
 
-> 不要与本套件取代的五个原插件（`dsh-subdisp`、`dsh-subpro`、`dsh-subctl`、`dsh-agent-sidebar`、`dsh-composer-model-badge`）共存——路由、钩子、工具与 slot 的双重注册属未定义行为。切换时请卸载原件。
-
 ## 运行时要求
 
 - **Node.js** `^22.19.0 || >=24.0.0`（与 DSH host 对齐）。
