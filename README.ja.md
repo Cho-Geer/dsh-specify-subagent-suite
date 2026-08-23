@@ -28,8 +28,6 @@ cd ~/.dsh/profiles/web && pnpm add @zach-tao/dsh-specify-subagent-suite
 
 その後、profile の `cordis.patch.yml` に行を追加し（id は `specify-subagent-suite`）、`dsh web` を再起動してください。
 
-> 本スイートが置き換える 5 つのオリジナルプラグイン（`dsh-subdisp`、`dsh-subpro`、`dsh-subctl`、`dsh-agent-sidebar`、`dsh-composer-model-badge`）との**併用はしないでください**——ルート・フック・ツール・slot の二重登録は未定義動作です。切り替え時にオリジナルをアンインストールしてください。
-
 ## 実行時要件
 
 - **Node.js** `^22.19.0 || >=24.0.0`（DSH host に準拠）。
