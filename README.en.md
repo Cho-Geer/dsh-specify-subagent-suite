@@ -28,8 +28,6 @@ cd ~/.dsh/profiles/web && pnpm add @zach-tao/dsh-specify-subagent-suite
 
 then add the row to your profile's `cordis.patch.yml` (id `specify-subagent-suite`) and restart `dsh web`.
 
-> Do not keep this suite installed alongside the five original plugins it replaces (`dsh-subdisp`, `dsh-subpro`, `dsh-subctl`, `dsh-agent-sidebar`, `dsh-composer-model-badge`) — double registration of routes, hooks, tools and slots is undefined behavior. Uninstall the originals when you switch.
-
 ## Runtime requirements
 
 - **Node.js** `^22.19.0 || >=24.0.0` (matches the DSH host).
