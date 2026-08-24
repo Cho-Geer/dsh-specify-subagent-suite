@@ -1,5 +1,9 @@
 # dsh-specify-subagent-suite（子代理模板工具套件）
 
+> **核心功能**：派遣子代理时可指定大模型和强度，不继承主会话，一次设置便可简单实现强弱模型搭配任务。
+>
+> token plan 不够用，想均衡一下成本的。想优化细分任务与子代理能力匹配的，可以试试。
+
 **语言**： [简体中文](./README.md) | [English](./README.en.md) | [日本語](./README.ja.md)
 
 五个常驻 DeepSeek Harness（DSH）插件合并为**一个 Cordis bundle**：右侧栏 Agent 列表、子代理模板面板、一次性子代理 record 徽章，以及 `subagent_pro` / `subagent_pro_presets` / `subagent_pro_audit` 三个工具。
