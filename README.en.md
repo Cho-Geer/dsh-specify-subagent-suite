@@ -1,5 +1,9 @@
 # dsh-specify-subagent-suite
 
+> **Core capability**: dispatch subagents with explicit model and effort — independent from the main session. Configure once and trivially mix strong/weak models across tasks.
+>
+> If your token plan is tight and you want to balance cost — or if you want to fine-tune which subagent handles which kind of task — give this a try.
+
 **Languages**: [简体中文](./README.md) | [English](./README.en.md) | [日本語](./README.ja.md)
 
 Five resident DeepSeek Harness (DSH) plugins merged into **one Cordis bundle**: the right-side Agent list, the subagent template panel, the one-shot subagent record badge, and the `subagent_pro` / `subagent_pro_presets` / `subagent_pro_audit` tools.
