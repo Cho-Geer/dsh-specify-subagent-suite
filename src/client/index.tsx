@@ -7,7 +7,7 @@
  * trajectory request. Reads the live conversation snapshot through the
  * standard useSession hook — zero RPC for the trajectory view; the
  * agent-preset id read from `state.byId[sessionId]?.agentPreset` is
- * localized through a one-shot `api.agentPresets.list` cache kept in
+ * localized through a one-shot `remote.agentPresets.list` cache kept in
  * module scope and re-read whenever the connection resets, so the badge
  * shows the preset's display name (`高精度审查模式`) instead of its
  * machine id (`high-precision`).
@@ -24,9 +24,7 @@ import { useSyncExternalStore } from 'react'
 import type { CSSProperties } from 'react'
 import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import type { ComposerChainProps } from '@deepseek-ai/dsh-client-ui-conversation/client'
-import type {
-  ClientContext, ConnectionHandle,
-} from '@deepseek-ai/dsh-client-runtime/client'
+import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
 import type {} from '@deepseek-ai/dsh-client-locale/client'
 import css from './ComposerModelBadge.module.css'
 import { presetTone, presetToneStyle } from './preset-tone'
@@ -180,7 +178,7 @@ export function ComposerModelBadge({
 }
 
 /** Required services for the composer slot and its dictionary. */
-export const inject = ['slots', 'locale', 'connection', 'remote']
+export const inject = ['slots', 'locale', 'connection', 'remote', 'remote.agentPresets']
 
 /**
  * Pull the agent-preset roster once and populate the module-scope
@@ -196,16 +194,19 @@ export const inject = ['slots', 'locale', 'connection', 'remote']
  * id until the cache fills.
  */
 function refreshPresetRoster(ctx: ClientContext): void {
-  const connection = ctx.get('connection') as ConnectionHandle | undefined
-  console.debug('[dsh-composer-model-badge] refreshPresetRoster', { hasConnection: connection !== undefined })
-  if (connection === undefined) return
-  void connection.api.agentPresets.list({}).then((response) => {
-    if (!response.result.ok) {
-      console.warn('[dsh-composer-model-badge] agentPresets.list not ok', response.result)
+  // 0.1.2 迁移：ApiProxy 包删除后 `connection.api` 不复存在，agent-preset
+  // 名册改由 remote 命名空间直达（对齐 ui-agent-preset settings-store 的
+  // `remote.agentPresets.list()` 调用形状）。守卫而非注入依赖：名册只影响
+  // 徽章的显示名回退，拿不到时静默保留机器 id。
+  const rosterApi = ctx.remote.agentPresets
+  if (rosterApi === undefined) return
+  void rosterApi.list().then((result) => {
+    if (!result.ok) {
+      console.warn('[dsh-composer-model-badge] agentPresets.list not ok', result)
       return
     }
     const next: Record<string, string> = {}
-    for (const entry of response.result.value.presets) {
+    for (const entry of result.value.presets) {
       // Mirror `presetDisplayText` (packages/client/ui-agent-preset/.../locales.ts:266):
       // user-authored presets localize through their preset.yml `name`;
       // shipped presets are intentionally absent from this map because the

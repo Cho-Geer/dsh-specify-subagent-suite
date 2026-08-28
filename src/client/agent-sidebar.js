@@ -115,7 +115,7 @@ function factory(require) {
 
     // ---- 组件：右侧栏三 tab ----
     function SidebarPanel(props) {
-      const { sessionId, useSession, useSessions, useProjection, openSubagent, setCatalogOpen, openDetails } = props
+      const { sessionId, useSession, useSessions, useProjection, useChat, openSubagent, setCatalogOpen, openDetails } = props
       const [tab, setTab] = React.useState('agents')
       const [expanded, setExpanded] = React.useState({})
       // Q3 修复：默认展开全部嵌套层级。原一次性布尔守卫（expandedInitDoneRef）在深层
@@ -129,8 +129,16 @@ function factory(require) {
       const byId = useSessions(s => s.byId)
       const catalogs = useSessions(s => s.subagentsByParent)
       const todosProj = useProjection('todos')
-      const nodes = useSession(s => s.nodes)
-      const runningCalls = useSession(s => s.runningCalls)
+      // 2026-08-28 工具详情看板空白修复：本体 0.1.2 已把会话内容从 useSession
+      // （SessionSnapshot，现仅生命周期/控制字段）迁至 uiChat 贡献的 useChat
+      // （ChatSnapshot）。旧字段在 SessionSnapshot 上恒为 undefined（本看板空白
+      // 的根因）。改读 ChatSnapshot 的 legacy 兼容切片（LegacyConversationSlice）：
+      // nodes 与 runningCalls 都在 legacy 内（ChatSnapshot 顶层没有 runningCalls，
+      // 本体 StatsLine 同通道）。useChat 缺席（旧本体/未注入）时降级为空数组，
+      // 面板保持可用。
+      const chat = typeof useChat === 'function' ? useChat(s => s) : undefined
+      const nodes = chat !== undefined && chat.legacy !== undefined ? chat.legacy.nodes : []
+      const runningCalls = chat !== undefined && chat.legacy !== undefined ? chat.legacy.runningCalls : []
 
       // 始终显示主会话（沿 parentId 向上走到非 subagent 的根祖先）的 agent 列表；
       // 首次解析的结果用 useState 钉住，避免瞬态空目录抖动。
