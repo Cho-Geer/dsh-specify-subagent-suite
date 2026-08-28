@@ -1,0 +1,77 @@
+# Release: on every push to main, run the full verification and publish to
+# npm ONLY when package.json carries a version that is not yet on the
+# registry (so everyday pushes skip; a deliberate version bump is what
+# triggers a release). Publishes with provenance, then tags v<version> and
+# creates a GitHub Release with generated notes.
+#
+# One-time activation (repo settings, not code):
+#   1. npmjs.com → create a granular Automation token for this package.
+#   2. GitHub repo → Settings → Secrets and variables → Actions →
+#      New repository secret: NPM_TOKEN = <that token>.
+#   3. Push to main. The first green run publishes the current version.
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write    # tag + GitHub Release
+  id-token: write    # npm provenance
+
+jobs:
+  verify-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Build client bundle
+        run: pnpm run build
+
+      - name: Test
+        run: pnpm test
+
+      - name: Is this version already on npm?
+        id: version
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
+            echo "already-published=true" >> "$GITHUB_OUTPUT"
+            echo "version $VERSION is already on npm — skipping publish"
+          else
+            echo "already-published=false" >> "$GITHUB_OUTPUT"
+            echo "version $VERSION is new — will publish"
+          fi
+
+      - name: Publish to npm
+        if: steps.version.outputs.already-published == 'false'
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Tag and create GitHub Release
+        if: steps.version.outputs.already-published == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          TAG="v$(node -p "require('./package.json').version")"
+          git tag "$TAG"
+          git push origin "$TAG"
+          gh release create "$TAG" --generate-notes --title "$TAG"
