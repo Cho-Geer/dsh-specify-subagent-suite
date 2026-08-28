@@ -22,7 +22,7 @@ import subctlPanelFactory from './client/subctl-panel.js'
 // `exports.inject = inject;` — required by
 // `packages/extensions/cordis-client-runner/src/registry.ts:316-330`
 // which reads the bundle module's `inject` export.
-export const inject = ['slots', 'sessions', 'layout', 'locale', 'connection', 'remote']
+export const inject = ['slots', 'sessions', 'layout', 'locale', 'connection', 'remote', 'remote.agentPresets']
 
 // v6 audit-fix (post R7-confirm): this `apply` is exported as
 // `exports.apply` by the tsdown output. The framework calls it

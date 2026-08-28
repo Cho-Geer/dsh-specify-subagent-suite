@@ -44,13 +44,17 @@ declare module '@deepseek-ai/dsh-client-runtime/client' {
     /** Cordis Service lookup. `undefined` while the Service has not appeared. */
     get<T = unknown>(service: string): T | undefined
     /**
-     * Remote event bus (DSH forwards allowlisted events verbatim from the
-     * host). The `settings/document-upupdated` event fires whenever any
-     * settings document changes, carrying the namespace id; the listener
-     * filters to the namespaces it cares about.
+     * Remote namespace (DSH forwards allowlisted events verbatim from the
+     * host). `$on` subscribes to forwarded emit events —
+     * `settings/document-updated` fires whenever any settings document
+     * changes, carrying the namespace id; the listener filters to the
+     * namespaces it cares about. Since 0.1.2 the remote namespace also
+     * carries the migrated `connection.api` call surface (`agentPresets`,
+     * …) directly — see `RemoteAgentPresets` below.
      */
     remote: {
       $on(event: 'settings/document-updated', handler: (ns: string) => void): () => void
+      agentPresets?: RemoteAgentPresets
     }
     locale: {
       register(ns: string, dict: Record<string, unknown>): void
@@ -77,23 +81,19 @@ declare module '@deepseek-ai/dsh-client-runtime/client' {
     readonly broken?: string
   }
 
-  /** Minimal `connection.api.agentPresets.list` wire contract (loopback). */
-  export interface IApiClientAgentPresets {
-    list(req: unknown): Promise<{
-      result:
-        | { ok: true; value: { presets: readonly AgentPresetEntry[] } }
-        | { ok: false; error: { message: string } }
-    }>
-  }
-
   /**
-   * Cordis Service handle handed to client plugins by `@deepseek-ai/dsh-client-runtime`.
-   * We only need `.api.agentPresets.list` to localize preset ids.
+   * `remote.agentPresets.list()` wire contract (0.1.2 remote namespace — the
+   * successor of the pre-0.1.2 `connection.api.agentPresets.list` loopback
+   * after the ApiProxy package removal). Every preset the deployment
+   * composes, in root-precedence order; we only consume `presets` here. See
+   * `packages/api/remotes/src/api/agent-presets.ts` for the full
+   * `AgentPresetEntry` contract.
    */
-  export interface ConnectionHandle {
-    readonly api: {
-      readonly agentPresets: IApiClientAgentPresets
-    }
+  export interface RemoteAgentPresets {
+    list(): Promise<
+      | { ok: true; value: { presets: readonly AgentPresetEntry[] } }
+      | { ok: false; error: { code: string; message: string } }
+    >
   }
 
   export type SnapshotSelectorHook<S> = <T>(selector: (s: S) => T) => T
