@@ -80,7 +80,13 @@ cd ~/.dsh/profiles/web && pnpm add @zach-tao/dsh-specify-subagent-suite
 
 - **Node.js** `^22.19.0 || >=24.0.0`（DSH host に準拠）。
 - **`@deepseek-ai/dsh-tools`** —— 本パッケージの `dependencies`（`next` dist-tag）により公共 npm から自動解決。host 側ツール（`subagent_pro` 等）はこれを通じて定義され、手動作業は不要。
-- **React** `^18.2.0` —— peer dependency。DSH web client が実行時に提供（バンドルされない）。
+
+## バージョン互換性
+
+| プラグイン版 | 対応 deepseek-harness | 備考 |
+|---|---|---|
+| `>= 0.2.2` | **`0.1.2-alpha.5`**（実測） | Session API 変更（`session.events` → `snapshotEvents()`）に起因する `subagent_pro` preset 派遣の結果返却クラッシュ（`TypeError: events is not iterable`、子エージェント完了後に親が結果を受け取れない）を修正。互換ヘルパーは旧 API へのフォールバックを保持するため、旧 harness とも後方互換のはず。詳細は [Release v0.2.2](https://github.com/Cho-Geer/dsh-specify-subagent-suite/releases/tag/v0.2.2)。 |
+| `<= 0.2.1` | `0.1.2-alpha.5` より前 | `0.1.2-alpha.5` では結果返却が必ず壊れる：子エージェントは完了するが、親側の `collectResult()` が例外を投げて結果を握り潰す。 |
 
 ## 既知の制限
 
