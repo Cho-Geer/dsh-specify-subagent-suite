@@ -80,7 +80,13 @@ then add the row to your profile's `cordis.patch.yml` (id `specify-subagent-suit
 
 - **Node.js** `^22.19.0 || >=24.0.0` (matches the DSH host).
 - **`@deepseek-ai/dsh-tools`** — resolved automatically from public npm via this package's `dependencies` (`next` dist-tag). The host-half tools (`subagent_pro` etc.) are defined through it; no manual step is needed.
-- **React** `^18.2.0` — peer dependency; provided by the DSH web client at runtime (never bundled).
+
+## Version compatibility
+
+| Plugin version | Compatible deepseek-harness | Notes |
+|---|---|---|
+| `>= 0.2.2` | **`0.1.2-alpha.5`** (verified) | Fixes the `subagent_pro` preset-dispatch result-return crash caused by the Session API change (`session.events` → `snapshotEvents()`): the child's completed answer was swallowed with `TypeError: events is not iterable`. The compat helper keeps a legacy-API fallback, so older harness builds should remain compatible. See [Release v0.2.2](https://github.com/Cho-Geer/dsh-specify-subagent-suite/releases/tag/v0.2.2). |
+| `<= 0.2.1` | before `0.1.2-alpha.5` | On `0.1.2-alpha.5` result return is always broken: the child actually finishes, but the parent-side `collectResult()` throws and drops the answer. |
 
 ## Known limitations
 

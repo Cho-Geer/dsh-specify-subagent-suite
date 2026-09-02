@@ -82,6 +82,13 @@ cd ~/.dsh/profiles/web && pnpm add @zach-tao/dsh-specify-subagent-suite
 - **`@deepseek-ai/dsh-tools`** —— 经本包 `dependencies`（`next` dist-tag）自动从公共 npm 解析。host 半体的工具（`subagent_pro` 等）经它定义，无需手动处理。
 - **React** `^18.2.0` —— peer dependency，由 DSH web client 在运行时提供（永不打包）。
 
+## 版本兼容
+
+| 插件版本 | 适配的 deepseek-harness | 说明 |
+|---|---|---|
+| `>= 0.2.2` | **`0.1.2-alpha.5`**（实测） | 修复 Session API 变更（`session.events` → `snapshotEvents()`）导致的 `subagent_pro` preset 派遣结果回传崩溃（`TypeError: events is not iterable`，子代理完成后父会话收不到结果）。兼容助手保留旧 API 回退，旧版 harness 理论上向后兼容。详见 [Release v0.2.2](https://github.com/Cho-Geer/dsh-specify-subagent-suite/releases/tag/v0.2.2)。 |
+| `<= 0.2.1` | `0.1.2-alpha.5` 之前 | 在 `0.1.2-alpha.5` 上结果回传必坏：子代理任务实际执行完成，但父侧 `collectResult()` 抛错吞掉结果。 |
+
 ## 已知限制
 
 - 框架内置的 `subagent_fork` / `subagent` 工具**不在**模板与忙态追踪覆盖范围内（内置工具不经插件派遣路径）。
